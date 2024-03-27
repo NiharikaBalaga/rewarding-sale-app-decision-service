@@ -2,9 +2,11 @@ import { Events } from './events.enum';
 import { UserService } from './User';
 import { PostService } from './Post';
 import { PostDLLService } from './PostDLL';
-import { IPostDLL } from '../DB/Models/Post-DLL';
+import type { IPostDLL } from '../DB/Models/Post-DLL';
 import type { IPost } from '../DB/Models/Post';
 import type mongoose from 'mongoose';
+import type { IReport } from '../DB/Models/Report';
+import { ReportService } from './Report';
 
 
 class SQSProcessorService {
@@ -20,6 +22,7 @@ class SQSProcessorService {
               const parsedMessage = JSON.parse(parsedBody.Message);
               if (parsedMessage['EVENT_TYPE'])
                 return this._handleMessageEventsSentBySNS(parsedMessage);
+
 
             } else {
               // Message sent by Queue itself
@@ -40,10 +43,11 @@ class SQSProcessorService {
   private static async _handleMessageEventsSentBySNS(parsedMessage: any) {
     const {
       EVENT_TYPE, user, userId, token, updatedUser, post, postId,
-      updatedPost, deletedPost, postDLL, postDLLId, updatedPostDLL, deletedPostDLL
+      updatedPost, deletedPost, postDLL, postDLLId, updatedPostDLL, deletedPostDLL, report,
+      reportID
     } = parsedMessage;
     console.log(EVENT_TYPE, user, userId, token, updatedUser, post, postId,
-      updatedPost, deletedPost, postDLL, postDLLId, updatedPostDLL, deletedPostDLL);
+      updatedPost, deletedPost, postDLL, postDLLId, updatedPostDLL, deletedPostDLL, report, reportID);
     switch (EVENT_TYPE) {
       case Events.userCreatedByPhone:
         return this._handleUserCreationByPhone(user, userId);
@@ -63,6 +67,8 @@ class SQSProcessorService {
         return this._handlePostDLLUpdate(updatedPostDLL, postDLLId);
       case Events.postDLLDelete:
         return this._handlePostDLLDelete(postDLLId);
+      case Events.newReport:
+        return this._handleNewReport(report, reportID);
       default:
         console.warn(`Unhandled event type: ${EVENT_TYPE}`);
         break;
@@ -146,6 +152,15 @@ class SQSProcessorService {
       await PostDLLService.deleteNode(postDLLId);
     } catch (error) {
       console.error('_handlePostDLLDelete-error', error);
+      throw error;
+    }
+  }
+
+  private static async _handleNewReport(report: IReport, reportId: mongoose.Types.ObjectId) {
+    try {
+      await ReportService.createReportWithGivenPostId(report, reportId);
+    } catch (error) {
+      console.error('_handleNewReport-error', error);
       throw error;
     }
   }
