@@ -28,7 +28,9 @@ async function bootstrap() {
     'aws_sns_secret_access_key',
     'aws_region',
     'aws_sqs_queue_name',
-    'aws_sqs_queue_url'
+    'aws_sqs_queue_url',
+    'DECISION_THRESHOLD',
+    'DECISION_TOPIC_SNS_ARN'
   ];
 
   const missingVariables = requiredEnvVariables.filter(variable => {

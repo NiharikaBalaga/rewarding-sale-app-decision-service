@@ -1,6 +1,7 @@
 import type mongoose from 'mongoose';
 import type { IReport } from '../DB/Models/Report';
 import ReportModel from '../DB/Models/Report';
+import { DecisionService } from './Decision';
 
 class ReportService {
 
@@ -12,8 +13,10 @@ class ReportService {
         return;
       }
 
-      const newReport = new ReportModel({ ...report });
-      return newReport.save();
+      const newReport = await new ReportModel({ ...report }).save();
+      await DecisionService.newReport(newReport);
+
+      return newReport;
     } catch (error) {
       throw error;
     }
@@ -26,4 +29,4 @@ class ReportService {
 
 export {
   ReportService
-}
+};

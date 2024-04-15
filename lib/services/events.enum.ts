@@ -9,4 +9,5 @@ export enum Events {
   postDLLUpdate = 'POST_DLL_UPDATE',
   postDLLDelete = 'POST_DLL_DELETE',
   newReport = 'REPORT_NEW_REPORT',
+  blockPost = 'DECISION_BLOCK_POST'
 }

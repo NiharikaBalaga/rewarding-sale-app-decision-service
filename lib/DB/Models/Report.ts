@@ -8,7 +8,8 @@ import { ReportTypes } from './report-types.enum';
 export interface IReport extends Document {
   userId: mongoose.Types.ObjectId,
   postId: mongoose.Types.ObjectId,
-  type: ReportTypes
+  type: ReportTypes,
+  createdAt: Date
 }
 
 const ReportSchema: mongoose.Schema = new mongoose.Schema({

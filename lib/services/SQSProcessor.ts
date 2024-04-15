@@ -18,7 +18,7 @@ class SQSProcessorService {
           try {
             const parsedBody = JSON.parse(Body);
             if (parsedBody.Message) {
-              // Message sent by SNS
+              // Message sent by SNS.ts
               const parsedMessage = JSON.parse(parsedBody.Message);
               if (parsedMessage['EVENT_TYPE'])
                 return this._handleMessageEventsSentBySNS(parsedMessage);
